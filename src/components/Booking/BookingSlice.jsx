@@ -33,6 +33,58 @@ export const saveUserDetails = createAsyncThunk(
   }
 );
 
+export const updateUserDetails = createAsyncThunk(
+  'booking/updateUserDetails',
+  async ({ id, userData }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        return rejectWithValue('No token found. Please set the token in localStorage.');
+      }
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.put(`http://192.168.1.5:3000/api/admin/updateUserBooking/${id}`, userData, config);
+      return response.data;  // This must be a plain object
+    } catch (error) {
+      return rejectWithValue(error.response.data);  // This must also be a plain object
+    }
+  }
+);
+
+export const fetchBookingDetails = createAsyncThunk(
+  'booking/fetchBookingDetails',
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        return rejectWithValue('No token found. Please set the token in localStorage.');
+      }
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(`http://localhost:3000/api/admin/getUserBooking/${id}`, config);
+      return response.data;  // This must be a plain object
+    } catch (error) {
+      return rejectWithValue(error.response.data);  // This must also be a plain object
+    }
+  }
+);
+
+
+
 const BookingSlice = createSlice({
   name: "booking",
   initialState: {
@@ -73,7 +125,33 @@ const BookingSlice = createSlice({
       .addCase(saveUserDetails.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+      })
+
+      .addCase(updateUserDetails.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUserDetails.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+      })
+      .addCase(updateUserDetails.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+        .addCase(fetchBookingDetails.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchBookingDetails.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // Update the state with the fetched booking details
+        Object.assign(state, action.payload);
+      })
+      .addCase(fetchBookingDetails.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
       });
+
+
+
   }
 });
 

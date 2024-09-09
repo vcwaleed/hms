@@ -13,9 +13,12 @@ function App() {
     <Routes>
   <Route path="/" element={<Homepage/>} />
   <Route path="/booking" element={<BookingForm/>} />
+  <Route path="/booking/:id" element={<BookingForm />} /> 
   <Route path="/form2" element={<Form2/>} />
   <Route path="/confirm" element={<HotelPackages/>} />
   <Route path="/bookingstatus" element={<UserBookingPage/>} />
+
+ 
 
     </Routes>
   </Router>

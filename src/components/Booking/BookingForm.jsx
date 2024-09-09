@@ -1,19 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { DevTool } from '@hookform/devtools';
 import { useDispatch } from 'react-redux';
-import { setName, setAge, setPnumber, setType, setDuration, setMaritalStatus, setWifeName, setChildren, setChildrenstatus, setPayment, saveUserDetails  } from './BookingSlice';
-import { useNavigate } from 'react-router-dom';
+import { setName, setAge, setPnumber, setType, setDuration, setMaritalStatus, setWifeName, setChildren, setChildrenstatus, setPayment, saveUserDetails ,updateUserDetails } from './BookingSlice';
+import { useNavigate,useParams } from 'react-router-dom';
 import { StickyNavbar } from '../navbar/StickyNavbar';
 
 const BookingForm = () => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
+   const { register, handleSubmit, control, formState: { errors }, setValue } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { id } = useParams(); 
+  const [isEditMode, setIsEditMode] = useState(false);
   const [maritalStatus, setMaritalStatusState] = useState('unmarried');
   const [hasChildren, setHasChildren] = useState(false);
   const [children, setChildrenState] = useState([]);
+  useEffect(() => {
+    if (id) {
+      setIsEditMode(true); // Indicate that we're in edit mode
+      // Fetch existing data here and prepopulate form
+      const fetchBooking = async () => {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://192.168.1.5:3000/api/admin/getUserBooking/${id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await response.json();
+        
+        // Prepopulate form fields with the existing booking data
+        if (data) {
+          setValue('name', data.name);
+          setValue('age', data.age);
+          setValue('pnumber', data.pnumber);
+          setValue('type', data.type);
+          setValue('duration', data.duration);
+          setValue('payment', data.payment);
+          setMaritalStatusState(data.maritalStatus);
+          setChildrenState(data.children || []);
+          setHasChildren(data.hasChildren);
+        }
+      };
+      fetchBooking();
+    }
+  }, [id, setValue]);
 
   const onSubmit = (data) => {
     dispatch(setName(data.name));
@@ -48,6 +80,14 @@ const BookingForm = () => {
       children: hasChildren ? children.map(child => child.name) : [],
       payment: data.payment,
     };
+
+    if (isEditMode) {
+      // Update booking
+      dispatch(updateUserDetails({ id, userData: bookingData }));
+    } else {
+      // Create new booking
+      dispatch(saveUserDetails(bookingData));
+    }
 
     
       navigate('/confirm');

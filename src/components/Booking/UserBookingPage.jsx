@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { StickyNavbar } from '../navbar/StickyNavbar';
+import { useNavigate } from 'react-router-dom';
 
 const UserBookingPage = () => {
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -38,6 +40,11 @@ const UserBookingPage = () => {
 
     fetchBookings();
   }, []);
+  
+
+const handleEditBooking = (id) => {
+  navigate(`/booking/${id}`);
+};
 
   return (
     <>  
@@ -61,7 +68,7 @@ const UserBookingPage = () => {
                   <p><strong className="font-semibold">Children Names:</strong> {children.join(', ')}</p>
                 )}
                 <p><strong className="font-semibold">Payment:</strong> ${payment}</p>
-                <button type="button" class="text-white mt-4 ml-4 bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Update</button>
+                <button type="button"  onClick={() => handleEditBooking(_id)} class="text-white mt-4 ml-4 bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Update</button>
 
 
               </li>

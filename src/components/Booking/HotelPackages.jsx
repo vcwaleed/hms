@@ -85,7 +85,7 @@ const HotelPackages = () => {
     dispatch(saveUserDetails(updatedUserDetails))
       .unwrap() // Unwraps the promise and allows you to handle the result directly
       .then(() => {
-        navigate('/form2'); // Navigate to the next page upon success
+        navigate('/bookingstatus'); // Navigate to the next page upon success
       })
       .catch((error) => {
         console.error('Error saving user details:', error);
