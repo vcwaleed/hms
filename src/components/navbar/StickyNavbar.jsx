@@ -26,7 +26,7 @@ export function StickyNavbar() {
         <a href="/booking" className="flex items-center">Booking</a>
       </Typography>
       <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
-        <a href="/aboutus" className="flex items-center">AboutUs</a>
+        <a href="/bookingstatus" className="flex items-center">All Booking</a>
       </Typography>
     </ul>
   );

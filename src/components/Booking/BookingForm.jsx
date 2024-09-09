@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { DevTool } from '@hookform/devtools';
 import { useDispatch } from 'react-redux';
-import { setName, setAge, setPnumber, setType, setDuration, setMaritalStatus, setWifeName, setChildren, setPayment, saveUserDetails } from './BookingSlice';
+import { setName, setAge, setPnumber, setType, setDuration, setMaritalStatus, setWifeName, setChildren, setChildrenstatus, setPayment, saveUserDetails  } from './BookingSlice';
 import { useNavigate } from 'react-router-dom';
 import { StickyNavbar } from '../navbar/StickyNavbar';
 
@@ -23,13 +23,17 @@ const BookingForm = () => {
     dispatch(setDuration(data.duration));
     dispatch(setPayment(data.payment));
     dispatch(setMaritalStatus(maritalStatus));
+    dispatch( setChildrenstatus(hasChildren))
+
 
     if (maritalStatus === 'married') {
       dispatch(setWifeName(data.wifeName || ""));
     }
 
     if (hasChildren) {
-      dispatch(setChildren(children));
+      
+      const childrenNames = children.map(child => child.name); // Map to get only names
+      dispatch(setChildren(childrenNames));
     }
 
     const bookingData = {
@@ -40,8 +44,8 @@ const BookingForm = () => {
       duration: data.duration,
       maritalStatus,
       wifeName: maritalStatus === 'married' ? data.wifeName : "",
-      hasChildren,
-      children,
+      hasChildren:data.hasChildren,
+      children: hasChildren ? children.map(child => child.name) : [],
       payment: data.payment,
     };
 

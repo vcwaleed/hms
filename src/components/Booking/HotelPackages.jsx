@@ -82,11 +82,14 @@ const HotelPackages = () => {
       type: packageData.name, // Optionally update the package type
     };
   
-    // Dispatch the updated user details to the store
-    dispatch(saveUserDetails(updatedUserDetails));
-  
-    // Optionally navigate to a confirmation page
-    navigate('/form2');
+    dispatch(saveUserDetails(updatedUserDetails))
+      .unwrap() // Unwraps the promise and allows you to handle the result directly
+      .then(() => {
+        navigate('/form2'); // Navigate to the next page upon success
+      })
+      .catch((error) => {
+        console.error('Error saving user details:', error);
+      })
   };
   
   return (
